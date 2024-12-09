@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>News Fetcher</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    h1 {
+      text-align: center;
+    }
+    #news-container {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      margin-top: 20px;
+    }
+    .news-article {
+      background-color: #fff;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+    }
+    .news-article h2 {
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+    .news-article p {
+      margin: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Latest News</h1>
+  <div id="news-container">Loading...</div>
+
+  <script>
+    const apiKey = '52a89b28de34406e9c9e29b97d912a4b'; // Your API key
+    const apiUrl = `https://newsapi.org/v2/top-headlines?country=us&apiKey=${apiKey}`;
+
+    // Function to fetch news articles
+    const fetchNews = async () => {
+      const newsContainer = document.getElementById('news-container');
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+        const data = await response.json();
+
+        // Clear loading message
+        newsContainer.innerHTML = '';
+
+        // Display each article
+        data.articles.forEach(article => {
+          const articleElement = document.createElement('div');
+          articleElement.classList.add('news-article');
+          articleElement.innerHTML = `
+            <h2>${article.title}</h2>
+            <p>${article.description || 'No description available.'}</p>
+            <p><strong>Source:</strong> ${article.source.name}</p>
+          `;
+          newsContainer.appendChild(articleElement);
+        });
+      } catch (error) {
+        console.error('Error fetching news:', error);
+        newsContainer.innerHTML = '<p style="color: red;">Failed to load news. Please try again later.</p>';
+      }
+    };
+
+    // Call the function to fetch news on page load
+    fetchNews();
+  </script>
+</body>
+
+</html>
